@@ -100,6 +100,12 @@ struct ClusterOptions {
     std::string sdesc_path;
 
     /**
+     * Per-chip soc descriptors by logical chip ID. A chip listed here is constructed with its own descriptor instead
+     * of sdesc_path, so test descriptors can present one package as several chips, each with its own cores.
+     */
+    std::unordered_map<ChipId, std::string> sdesc_paths_per_chip;
+
+    /**
      * Used to constrain Cluster by specifying which chips should be present.
      * For chip_type == ChipType::MOCK, used to specify list of mock chips.
      * Uses logical IDs.

@@ -734,8 +734,11 @@ Cluster::Cluster(ClusterOptions options) {
 
     // Construct all the required chips from the cluster descriptor.
     for (auto& chip_id : cluster_desc->get_chips_local_first(cluster_desc->get_all_chips())) {
+        const auto per_chip_sdesc = options.sdesc_paths_per_chip.find(chip_id);
+        const std::string& chip_sdesc_path =
+            per_chip_sdesc != options.sdesc_paths_per_chip.end() ? per_chip_sdesc->second : options.sdesc_path;
         SocDescriptor soc_desc =
-            construct_soc_descriptor(options.sdesc_path, chip_id, options.chip_type, cluster_desc.get());
+            construct_soc_descriptor(chip_sdesc_path, chip_id, options.chip_type, cluster_desc.get());
 
         // Reuse TTDevice from topology discovery if available, avoiding duplicate device creation.
         std::unique_ptr<TTDevice> tt_device;
