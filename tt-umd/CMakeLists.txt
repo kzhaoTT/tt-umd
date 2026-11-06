@@ -332,10 +332,9 @@ target_link_libraries(tt-umd-base PRIVATE tt-kmd-lib::tt-kmd-lib)
 
 # Grendel (chippy) JTAG. Empty INTERFACE lib when TT_UMD_BUILD_GRENDEL_JTAG=OFF,
 # so this link is a no-op for normal builds.
-target_link_libraries(tt-umd PRIVATE umd_grendel_jtag)
+target_link_libraries(tt-umd-base PRIVATE umd_grendel_jtag)
 
 if(TT_UMD_BUILD_GRENDEL_JTAG)
-    target_compile_definitions(tt-umd PRIVATE TT_UMD_BUILD_GRENDEL_JTAG)
     # These translation units include chippy headers and must compile as C++20.
     # Confine the bump to them (the -std override comes after the target's
     # -std=c++17, so it wins); UMD's public standard stays C++17.
@@ -348,7 +347,7 @@ if(TT_UMD_BUILD_GRENDEL_JTAG)
         src/tt_device/chippy_memory.cpp
         src/tt_device/emu_tt_device.cpp
     )
-    target_sources(tt-umd PRIVATE ${GRENDEL_CHIPPY_SRCS})
+    target_sources(tt-umd-base PRIVATE ${GRENDEL_CHIPPY_SRCS})
 
     set(GRENDEL_CHIPPY_COMPILE_OPTIONS "-std=c++20")
     # Chippy's JTAG2AXI headers use C++20 std::format and require GCC/libstdc++ >= 13. Metal's
@@ -362,7 +361,6 @@ if(TT_UMD_BUILD_GRENDEL_JTAG)
             )
         endif()
         list(APPEND GRENDEL_CHIPPY_COMPILE_OPTIONS "--gcc-install-dir=${GRENDEL_GCC13_ROOT}")
-        target_link_directories(tt-umd BEFORE PRIVATE "${GRENDEL_GCC13_ROOT}")
     endif()
     set_source_files_properties(
         ${GRENDEL_CHIPPY_SRCS}

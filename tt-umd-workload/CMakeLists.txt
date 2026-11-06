@@ -63,6 +63,15 @@ target_link_libraries(
         tt-umd-utils::tracy-shim
 )
 
+# Grendel (chippy) JTAG: the device code is in tt-umd-base; cluster.cpp opens it, and the link needs libstdc++ 13
+# when chippy's C++20 sources are built with Clang (see tt-umd/CMakeLists.txt).
+if(TT_UMD_BUILD_GRENDEL_JTAG)
+    target_compile_definitions(tt-umd PRIVATE TT_UMD_BUILD_GRENDEL_JTAG)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+        target_link_directories(tt-umd BEFORE PRIVATE "/usr/lib/gcc/${CMAKE_LIBRARY_ARCHITECTURE}/13")
+    endif()
+endif()
+
 if(TT_UMD_BUILD_SIMULATION)
     target_sources(tt-umd PRIVATE src/simulation/simulation_chip.cpp)
     target_compile_definitions(tt-umd PUBLIC TT_UMD_BUILD_SIMULATION)
